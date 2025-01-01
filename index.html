@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .strength {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .weak { color: red; }
+        .medium { color: orange; }
+        .strong { color: green; }
+        #password-suggestion {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border: 1px dashed #ddd;
+            margin-top: 20px;
+        }
+        #generate-password {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #generate-password:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Password Strength Checker</h1>
+        <input type="password" id="password" placeholder="Enter your password" oninput="checkPasswordStrength()">
+        <p id="strength" class="strength"></p>
+
+        <div id="password-suggestion">
+            <h3>Random Strong Password Suggestion:</h3>
+            <p id="suggested-password"></p>
+            <button id="generate-password" onclick="generateStrongPassword()">Generate New Password</button>
+        </div>
+    </div>
+
+    <script>
+        function checkPasswordStrength() {
+            let password = document.getElementById("password").value;
+            let strengthText = document.getElementById("strength");
+            let score = 0;
+
+            // Length check
+            if (password.length >= 8) score += 1;
+            if (password.length >= 12) score += 1;
+
+            // Character variety checks
+            if (/[a-z]/.test(password)) score += 1;
+            if (/[A-Z]/.test(password)) score += 1;
+            if (/\d/.test(password)) score += 1;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score += 1;
+
+            // Check for dictionary words (basic check for common words)
+            if (/password|12345|admin/i.test(password)) score -= 1;
+
+            // Determine strength
+            if (score <= 2) {
+                strengthText.textContent = "Weak password";
+                strengthText.className = "weak";
+            } else if (score === 3 || score === 4) {
+                strengthText.textContent = "Medium password";
+                strengthText.className = "medium";
+            } else {
+                strengthText.textContent = "Strong password";
+                strengthText.className = "strong";
+            }
+        }
+
+        function generateStrongPassword() {
+            const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+            let passwordLength = 16;
+            let password = "";
+            for (let i = 0; i < passwordLength; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                password += characters[randomIndex];
+            }
+            document.getElementById("suggested-password").textContent = password;
+        }
+
+        // Initial random password suggestion on page load
+        window.onload = generateStrongPassword;
+    </script>
+
+</body>
+</html>
